@@ -73,3 +73,4 @@ export const setupServer = () => {
 };
 
 module.exports = setupServer;
+export default setupServer;
