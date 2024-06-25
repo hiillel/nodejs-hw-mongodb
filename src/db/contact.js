@@ -1,4 +1,5 @@
  import { Schema } from 'mongoose';
+ import { model } from 'mongoose';
 
  const Contact = new Schema(
    {
