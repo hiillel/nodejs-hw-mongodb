@@ -1,5 +1,5 @@
  import { Schema } from 'mongoose';
- import { model } from 'mongoose';
+ const { model } = require('mongoose');
 
  const Contact = new Schema(
    {
