@@ -1,51 +1,72 @@
-import express from 'express';
-import cors from 'cors';
-import pino from 'pino-http';
-import { notFoundHandler } from './middlewares/notFoundHandler.js';
-import { env } from './utils/env.js';
-import { contactsRouter } from './routers/contacts.js';
-import { errorHandler } from './middlewares/errorHandler.js';
+import createHttpError from 'http-errors';
+import {
+  getAllContacts,
+  getContactById,
+  createContact,
+  updateContact,
+  deleteContact,
+} from '../services/contacts.js';
 
-const PORT = Number(env('PORT', '3000'));
-export const setupServer = () => {
-  const app = express();
+export const getContactsController = async (req, res) => {
+  const contacts = await getAllContacts();
 
-  // cors pino
-
-  app.use(cors());
-  app.use(
-    pino({
-      transport: {
-        target: 'pino-pretty',
-      },
-    }),
-  );
-
-  // parser
-
-  app.use(
-    express.json({
-      limit: '1mb',
-      type: ['application/json', 'application/vnd.api+json'],
-    }),
-  );
-
-  //  get 
-
-  app.use(contactsRouter);
-
-  // 404 
-
-  app.use(notFoundHandler);
-
-  // 500 
-  
-  app.use(errorHandler);
-
-  //   start server
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}!`);
+  res.json({
+    status: 200,
+    message: 'Successfully found contacts!',
+    data: contacts,
   });
+};
 
-  return app;
+export const getContactByIdController = async (req, res, next) => {
+  const { contactId } = req.params;
+  const contact = await getContactById(contactId);
+
+  if (!contact) {
+    next(createHttpError(404, 'Contact not found'));
+    return;
+  }
+
+  res.json({
+    status: 200,
+    message: `Successfully found contact with id ${contactId}!`,
+    data: contact,
+  });
+};
+export const createContactController = async (req, res) => {
+  const contact = await createContact(req.body);
+
+  res.status(201).json({
+    status: 201,
+    message: `Successfully created a contact!`,
+    data: contact,
+  });
+};
+
+export const patchContactController = async (req, res, next) => {
+  const { contactId } = req.params;
+  const result = await updateContact(contactId, req.body);
+
+  if (!result) {
+    next(createHttpError(404, 'Contact not found'));
+    return;
+  }
+
+  res.status(200).json({
+    status: 200,
+    message: `Successfully patched a contact!`,
+    data: result.contact,
+  });
+};
+
+export const deleteContactController = async (req, res, next) => {
+  const { contactId } = req.params;
+
+  const contact = await deleteContact(contactId);
+
+  if (!contact) {
+    next(createHttpError(404, 'Contact not found'));
+    return;
+  }
+
+  res.status(204).send();
 };
