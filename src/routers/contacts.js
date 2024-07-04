@@ -14,7 +14,6 @@ import {
 } from '../validation/contact.js';
 
 export const contactsRouter = Router();
-contactsRouter.use('/contacts/:contactsId', validateMongoId('contactsId'));
 
 contactsRouter.get('/contacts', ctrlWrapper(getAllContactsController));
 
