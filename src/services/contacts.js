@@ -52,14 +52,14 @@ export const getContactById = async (contactId) =>
 export const createContact = async (payload) =>
   await ContactsCollection.create(payload);
 
-export const updateContact = async (contactId, payload) => {
-  const updatedContact = await ContactsCollection.findByIdAndUpdate(
+export const upsertContact = async (contactId, payload) => {
+  const upsertedContact = await ContactsCollection.findByIdAndUpdate(
     contactId,
     payload,
     { new: true },
   );
 
-  return updatedContact;
+  return upsertedContact;
 };
 
 export const deleteContact = async (contactId) => {
