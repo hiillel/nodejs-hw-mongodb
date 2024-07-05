@@ -3,24 +3,18 @@ import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 import { KEYS_OF_CONTACT } from '../constants/constants.js';
 
 export const getAllContacts = async ({
-  page,
-  perPage,
-  sortBy,
-  sortOrder,
-  filter,
-}) => {
+  page = 1,
+  perPage = 10,
+  sortBy = 'name', 
+  sortOrder = 'asc', 
+  filter = {},
+} = {}) => {
   const limit = perPage;
   const skip = (page - 1) * perPage;
 
   const contactsFilters = ContactsCollection.find();
 
-  if (filter.contactType) {
-    contactsFilters
-      .where(KEYS_OF_CONTACT.contactType)
-      .equals(filter.contactType);
-  }
-  
-  if (filter.isFavourite) {
+  if (filter.isFavourite !== undefined) {
     contactsFilters
       .where(KEYS_OF_CONTACT.isFavourite)
       .equals(filter.isFavourite);
