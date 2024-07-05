@@ -1,15 +1,28 @@
-import mongoose from 'mongoose';
 import createHttpError from 'http-errors';
 import {
   createContact,
   deleteContact,
   getAllContacts,
   getContactById,
-  upsertContact,
+  updateContact,
 } from '../services/contacts.js';
+import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parseSortParams } from '../utils/parseSortParams.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
 
 export const getAllContactsController = async (req, res) => {
-  const contacts = await getAllContacts();
+  const { page, perPage } = parsePaginationParams(req.query);
+  const { sortBy, sortOrder } = parseSortParams(req.query);
+  const filter = parseFilterParams(req.query);
+  console.log(filter);
+
+  const contacts = await getAllContacts({
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+    filter,
+  });
 
   res.status(200).json({
     status: 200,
@@ -21,12 +34,6 @@ export const getAllContactsController = async (req, res) => {
 export const getContactByIdController = async (req, res, next) => {
   const contactId = req.params.contactsId;
 
-  if (!mongoose.isValidObjectId(contactId)) {
-    return res.status(404).json({
-      status: 404,
-      message: `Id ${contactId} is not valid`,
-    });
-  }
   const contact = await getContactById(contactId);
   if (!contact) {
     next(createHttpError(404, 'Contact not found'));
@@ -59,7 +66,7 @@ export const patchContactController = async (req, res, next) => {
   const contactId = req.params.contactsId;
   const { body } = req;
 
-  const updatedContact = await upsertContact(contactId, body);
+  const updatedContact = await updateContact(contactId, body);
 
   if (!updatedContact) {
     throw createHttpError(404, 'Contact not found');
