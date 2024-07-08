@@ -1,5 +1,5 @@
 import { KEYS_OF_CONTACT } from '../constants/constants.js';
-import { ContactsCollection } from '../db/models/contact.js';
+import { ContactsCollection } from '../db/contact.js';
 import { calculatePaginationData } from '../utils/calculatePaginationData.js';
 
 export const getAllContacts = async ({
