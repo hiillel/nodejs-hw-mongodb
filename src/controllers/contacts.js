@@ -47,7 +47,7 @@ export const getContactByIdController = async (req, res, next) => {
   });
 };
 
-// post
+// posted
 
 export const createContactController = async (req, res) => {
   const { body } = req;
