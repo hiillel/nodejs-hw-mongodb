@@ -4,7 +4,7 @@ const contactSchema = new Schema(
   {
     name: { type: String, required: true },
     phoneNumber: { type: String, required: true },
-    email: { type: String, required: false },
+    email: { type: String },
     isFavourite: { type: Boolean, default: false },
     contactType: {
       type: String,
@@ -12,6 +12,7 @@ const contactSchema = new Schema(
       enum: ['work', 'home', 'personal'],
       default: 'personal',
     },
+    userId: { type: Schema.ObjectId, required: false },
   },
   { timestamps: true, versionKey: false },
 );
